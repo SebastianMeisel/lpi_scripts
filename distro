@@ -1,54 +1,86 @@
 #!/bin/bash
 
+# Überprüfen ob die Datei existiert mit if [ -e Dateiname ]
 if [ -e /etc/os-release ]
 then
-        # echo "Using /etc/os-release"
+        #  VARIABLE( LISTE ) : Array
+        #  $(...) gibt Ausgabe des Befehls in der Klammer als String zurück
+        #  sed -E : extended regular expressions nutzen - ermöglicht das Folgende:
+        #  sed -E 's/(.*)(.*)/\1/' nur ausgeben, was mit dem regulären Ausdruck in der ersten Klammer gefunden wurde
+        #  sed -E 's/(.*)=(.*)/\2/' : Alles nach dem = ausgeben
+        #  sed 's/\"//g' : Anführungszeichen entfernen
+        #  sed 's/\s/_/g' Leerzeichen durch Unterstriche ersetzen (Da Leerzeichen als Delimiter in Bash-Arrays genutzt werden) 
         os_release=($(sed -E 's/([A-Z_]+)=(.*$)/\2/;s/\"//g;s/\s/_/g' /etc/os-release))
+        #  ([A_Z_]+) Mehrere Großbuchstaben die die durch Unterstriche getrennt sein können : Keys am Anfang jeder Zeile
         keys=($(sed -E 's/([A-Z_]+)=(.*$)/\1/' /etc/os-release))
+# Falls /etc/os-release nicht existiert überprüfen ob /etc/issue als Fallback genutzt werden kann
 elif [ -e /etc/issue ]
 then
-        # echo "Using /etc/issue"
+        # head -1 : Wir brauchen nur die erste Zeile
+        # | sed : an sed pipen um die benötigten Schlüssel zu holen
+        # wahnsinnig komplizierter Regex - besser nicht genauer hinsehen ;-)
         os_release=($(head -1 /etc/issue | sed -E 's/(Wel.*to)?\s*(Linux)?\s*(\b[a-z]+\b).*?(\s[0-9.]+\s)\s*(LTS)?.*/\3 \4 \5 \"\2 \3 \4 \5\"/i'))
-        keys=("Name" "Version_ID" "Version" "Pretty Name")
+        # Keys werden von Hand gesetzt
+        keys=("NAME" "VERSION_ID" "VERSION" "PRETTY NAME")
+# Wenn werder /etc/os-release noch /etc/issue vorhanden sind mit Fehlermeldung schließen
 else
         echo "No distro info found."   
         return 1
 fi
 
-# if sourced export as Variables
+# Die Variable BASH_SOURCE enthalt die Shell oder das Skript, dass unser Skript mit 'source distro' oder '. distro' aufruft
+# Wenn das Skript direkt aufgerufen wird enthält BASH_SOURCE den Namen des Skripts wäre also  = $0
+# Wenn $BASH_SOURCE != (ungleich) $0, dann...
 if [ $BASH_SOURCE != $0 ]
 then
+        # Zähler für die Keys
         c=0
+        # Liste der Keys durchgehen
         for k in ${keys[*]}
         do
+                # Für jeden Key eine Umgebungsvariable OS_(Name des Keys) ausgeben
+                # ${os_release[$c]} gibt den Wert aus
                 eval "export OS_$k"='${os_release[$c]}'
+                # Zähler erhöhen
                 ((c++))
         done
         return 0
 fi
 
+# Funktion zur Zuordnung der Keys zu den Werten
 function key {
+        # Zähler
         c=0
+        # Alle Keys durchgehen
         for k in ${keys[*]}
         do
+                # Wenn der Name des Keys dem übergebenen Parameter entspricht ...
                 if [ "$1" = "$k" ]
                 then
+                        # Zähler = Position im Array ausgeben
                         echo $c
+                        # Funktion mit Error-Code 0 (kein Fehler) beenden
                         return 0
                 fi
+                # Zähler hochzählen
                 ((c++))
         done
+        # keine Übereinstimmung gefunden: Error-Code 0 zurückgeben
         return 1
 }
 
+# Funktion zur Ausgabe eine Hilfemeldung
 function usage {
         echo "Usage: distro -n(ame) -v(ersion) -l(ts) -a(ll)" 
         echo "or: distro KEY"
         echo "known KEYs are: ${keys[*]}" 
 }
 
+# $1 enthält das erste Argumente mit dem das Skipt aufgerufen wurde
+# if [ -z $1 ] überprüft ob die Variable leer ist: Keine Argumente übergeben wurden
 if [ -z $1  ]
 then
+        # wenn ja werden alle Informationen ausgegeben
         c=0
         for k in ${keys[*]}
         do
@@ -56,6 +88,7 @@ then
                 ((c++))
         done
 else
+        # sonst werden je nach Argument Informationen ausgegeben.
         for arg in $@
                 do case $arg in
                 [A-Z_]*)
