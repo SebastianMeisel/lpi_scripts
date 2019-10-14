@@ -1,0 +1,85 @@
+#!/bin/bash
+
+if [ -e /etc/os-release ]
+then
+        # echo "Using /etc/os-release"
+        os_release=($(sed -E 's/([A-Z_]+)=(.*$)/\2/;s/\"//g;s/\s/_/g' /etc/os-release))
+        keys=($(sed -E 's/([A-Z_]+)=(.*$)/\1/' /etc/os-release))
+elif [ -e /etc/issue ]
+then
+        # echo "Using /etc/issue"
+        os_release=($(head -1 /etc/issue | sed -E 's/(Wel.*to)?\s*(Linux)?\s*(\b[a-z]+\b).*?(\s[0-9.]+\s)\s*(LTS)?.*/\3 \4 \5 \"\2 \3 \4 \5\"/i'))
+        keys=("Name" "Version_ID" "Version" "Pretty Name")
+else
+        echo "No distro info found."   
+        return 1
+fi
+
+# if sourced export as Variables
+if [ $BASH_SOURCE != $0 ]
+then
+        c=0
+        for k in ${keys[*]}
+        do
+                eval "export OS_$k"='${os_release[$c]}'
+                ((c++))
+        done
+        return 0
+fi
+
+function key {
+        c=0
+        for k in ${keys[*]}
+        do
+                if [ "$1" = "$k" ]
+                then
+                        echo $c
+                        return 0
+                fi
+                ((c++))
+        done
+        return 1
+}
+
+function usage {
+        echo "Usage: distro -n(ame) -v(ersion) -l(ts) -a(ll)" 
+        echo "or: distro KEY"
+        echo "known KEYs are: ${keys[*]}" 
+}
+
+if [ -z $1  ]
+then
+        c=0
+        for k in ${keys[*]}
+        do
+                echo "$k    ${os_release[$c]}"
+                ((c++))
+        done
+else
+        for arg in $@
+                do case $arg in
+                [A-Z_]*)
+                        if key $arg > /dev/null
+                        then echo "${os_release[$(key $arg)]}" 
+                        else "usage"
+                        fi ;;
+                -n|-name) echo "${os_release[$(key NAME)]}" ;;
+                -v|-version)
+                        if key VERSION_ID &>/dev/null
+                                then echo "${os_release[$(key VERSION_ID)]}" 
+                                else echo "no version - rolling release?"
+                        fi
+                        ;;
+                -l|-lts) if grep -q LTS <<< "${os_release[$(key VERSION)]}"
+                         then echo "LTS"
+                         else echo "no LTS"
+                         fi ;;
+                -a|-all|-p|-pretty) echo "${os_release[$(key PRETTY_NAME)]}"; uname -r ;;
+                *)      usage;;
+                esac
+        done
+fi
+
+return 0
+#---------------------------------------------------------------------------
+
