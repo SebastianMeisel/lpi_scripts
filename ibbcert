@@ -1,0 +1,28 @@
+#!/bin/bash
+
+wget --no-check-certificate https://passthrough.fw-notify.net/cacert.pem || die "Zertifikat kann nicht heruntergeladen werden"
+
+function die {
+        echo $1
+        exit
+}
+
+rm cacert.pem &> /dev/null
+wget --no-check-certificate https://passthrough.fw-notify.net/cacert.pem || die "Zertifikat kann nicht heruntergeladen werden"
+
+
+if [ -e /usr/bin/apt ]
+then 
+        openssl x509 -outform der -in cacert.pem -out ibb.crt
+        rm cacert.pem
+        mkdir /usr/share/ca-certificates/extra 2>/dev/null
+
+        mv -i ibb.crt /usr/share/ca-certificates/extra
+
+        dpkg-reconfigure ca-certificates
+elif [ -e /usr/bin/zypper ]
+        mv -i cacert.pem /etc/pki/trust/anchors
+        update-ca-certificates  
+fi
+
+echo "Zertifikat erfolgreich installiert. Der Rest liegt an der ibb Firewall oder an Dir!"
