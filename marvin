@@ -1,0 +1,55 @@
+#!/bin/bash
+
+function talk {
+        for i in $1
+        do
+                j=0
+                #       for j in $(seq -1 ${#i})        
+                while ((j < ${#i}))
+                do
+                        echo -n "${i:j:1}"
+                        sleep .02
+                        ((j++))
+                done
+                echo -n " "
+        done
+        echo ""
+        true
+}
+
+echo -e "\e[1;32m"
+
+talk "Ich bin Marvin, das paranoide Programm."
+talk "Welches Verzeichnis willst du sichern?"
+
+read -p  ": " dir
+
+if [ -e $dir ]
+then
+        if [  "$(file -b $dir)" = "directory" ]
+       then
+                talk "Ich sichere das Verzeichnis $dir."
+                talk "Macht mir aber sicher keinen Spaß."
+                archive="$(basename $dir)-$(date +%Y-%m-%d).tar.xz"
+                tar cvJf $archive $dir/* && \
+                scp ./$archive sebastian@10.0.10.40:/home/sebastian/backup
+                if [ $? = 1 ]
+                        then talk "Ich wusste, dass es keinen Spaß macht!"
+                        else talk "Das Programm, mit dem ich gesprochen habe, hat sich aufgehängt!"
+                fi
+                if [ -e $archive ] ; then rm $archive ; fi
+        else
+                talk "Ha! Ha! $dir ist kein Verzeichnis. Findest du so was witzig. Ich nicht."
+        fi
+else
+        talk "Ich kann $dir beim besten Willen nicht finden."
+        talk "Das deprimiert micht."
+        talk "Aber kümmer dich nicht um micht!"
+fi
+talk "Ich würde jetzt gerne einen Karton über meinen Kopf ziehen."
+talk "Ich habe aber keinen Kopf"
+talk "… und keinen Karton".
+talk "Natürlich: Für eine künstliche Persönlichkeit ist Geld da!"
+talk "Aber nicht für einen billigen Karton."
+
+echo -e "\e[0;0m"
