@@ -1,0 +1,23 @@
+   20   TCP –   FTP – Datenübertragung                                                                                      offiziell   
+   21   TCP UDP FTP – Verbindungsaufbau und Steuerung                                                                       offiziell   
+   22   TCP UDP Secure Shell (SSH) wird für verschlüsselte Fernwartung und Dateiübertragung genutzt (scp, sftp) sowie für   offiziell   
+   23   TCP –   Telnet – unverschlüsseltes Textprotokoll, z. B. für Fernwartung (ähnlich SSH, mit telnetd) oder manuelle    offiziell   
+   25   TCP –   Simple Mail Transfer Protocol (SMTP) wird für die E-Mail-Übermittlung zwischen E-Mail-Servern genutzt und   offiziell   
+   53   TCP UDP Domain Name System (DNS), meist über UDP                                                                    offiziell   
+   80   TCP –   Hypertext Transfer Protocol (HTTP)                                                                          offiziell   
+   110  TCP –   Post Office Protocol v3 (POP3)                                                                    offiziell   
+   123  –   UDP Network Time Protocol (NTP) zur (hoch)genauen Zeitsynchronisierung zwischen mehreren Computern    offiziell   
+   139  TCP UDP NetBIOS NetBIOS Session Service                                                                   offiziell   
+   143  TCP UDP Internet Message Access Protocol (IMAP) – Mail-Management                                         offiziell   
+   161  –   UDP Simple Network Management Protocol (SNMP)                                                         offiziell   
+   162  TCP UDP Simple Network Management Protocol Trap (SNMPTRAP)^[13]                                           offiziell   
+   389  TCP UDP Lightweight Directory Access Protocol (LDAP)                                                                offiziell   
+   443  TCP –   HTTPS (Hypertext Transfer Protocol over SSL/TLS)                                                            offiziell   
+   465  TCP –   URD (URL Rendezvous Directory for SSM)                                                                      offiziell   
+   465  TCP –   SMTP over SSL                                                                                               inoffiziell 
+   465  –   UDP IGMP v3lite (IGMP over UDP for SSM)                                                                         offiziell   
+   514  TCP –   rsh wird genutzt, um nicht-interaktiv Kommandos auf entfernten Systemen auszuführen. (via Remote Shell,     offiziell   
+   514  –   UDP Syslog für System-Logs                                                                                      offiziell   
+   636  TCP UDP Lightweight Directory Access Protocol over TLS/SSL (LDAPS)                                          offiziell           
+   993  TCP –   Internet Message Access Protocol over TLS/SSL (IMAPS)                                               offiziell           
+   995  TCP –   Post Office Protocol 3 over TLS/SSL (POP3S) 
