@@ -3,8 +3,8 @@
 
 # Gibt \$(if [ \$? -gt 0 ] …) Färbt den Promt rot, wenn $? (Error Code des letzten Commandos größer 0
 # [\A] \u gibt die Zeit und danach den Usernamen aus
-# \$(if [ `hostname` != 'sebastian-Tuxedo' ] …) gibt den Hostnamen aus, wenn er nicht meiner ist = ssh-Session
+# \[\e[1;34m\]… : hostname wird blau geschrieben
 PS1="\$(if [ \$? -gt 0 ] ; then echo -e '\[\e[0;31m\]' ;\
 else  echo -e '\[\e[1;32m\]' ; fi)\
 [\A] \u\
-\$(if [ `hostname` != 'sebastian-Tuxedo' ] ; then echo -e '\[\e[1;34m\]@\\h' ; fi) \W$\[\e[0m\] "
+\[\e[1;34m\]@\\h \W$\[\e[0m\] "
