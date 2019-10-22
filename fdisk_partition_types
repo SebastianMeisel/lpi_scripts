@@ -1,0 +1,14 @@
+ 0 Empty          
+ 5 Extended       
+ b W95 FAT32      
+82 Linux swap
+83 Linux          
+85 Linux extended 
+86 NTFS volume set
+87 NTFS volume set
+88 Linux plaintext
+8e Linux LVM      
+e1 DOS access     
+e3 DOS R/O        
+ee GPT            
+ef EFI (FAT-12/16/32)
