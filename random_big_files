@@ -1,6 +1,11 @@
 #!/bin/bash
+# Vorher ausführen (Laufwerk-Device anpassen):
+#   mkfs.xfs /dev/sdX
+#   mount /dev/sdX /mnt
+#   cd /mnt
 
-for f in $(seq -f 'file%04g' 1 42) 
+for f in $(seq -f 'file%04g' 1 42)  # 42 Dateien: file0001...file0042
 do 
+  # Dateien zwischen 1000000 und 1000000000 Blöcken a 102 Byte erstellen
   dd if=/dev/urandom  of=$f bs=102 count=$(($RANDOM % 1000000000 +1000000)) 
 done
