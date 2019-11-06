@@ -1,0 +1,11 @@
+#!/bin/bash
+# Braucht: fragment (perl script)
+# Vorher ausführen: random_bigfiles
+
+for f in $(seq -f "file%04g" 1 42) 
+do
+  # Framentiere Datei -> Datei.frag.
+  fragment $f $f.frag 
+  # Ersetze Datein durch Datei.frag.
+  mv $f.frag $f 
+done 
