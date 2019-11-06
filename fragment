@@ -1,0 +1,29 @@
+#!/usr/bin/perl
+# Geklaut von https://unix.stackexchange.com/users/11668/hhaamu
+# Quelle: https://unix.stackexchange.com/questions/34449/how-to-deliberately-fragment-a-file
+
+use List::Util qw/shuffle/;
+use IO::Handle;
+
+use constant BLOCK_SIZE => 4096;
+
+my ($src, $dst) = @ARGV;
+
+my $size = (stat($src))[7];
+my @blocks = shuffle(0 .. ($size / BLOCK_SIZE));
+
+my ($srcfh, $dstfh);
+open $srcfh, "<", $src or die "cannot open $src: $!";
+open $dstfh, ">", $dst or die "cannot open $dst: $!";
+truncate $dstfh, $size; # undefined behaviour
+
+my $buf;
+for my $blockno (@blocks) {
+  seek $_, $blockno * BLOCK_SIZE, 0 for ($srcfh, $dstfh);
+  read $srcfh, $buf, BLOCK_SIZE;
+  print $dstfh $buf;
+  $dstfh->flush;
+}
+
+close $dstfh;
+close $srcfh;
