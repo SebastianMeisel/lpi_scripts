@@ -1,0 +1,6 @@
+#!/bin/bash
+
+for f in $(seq -f 'file%04g' 1 42) 
+do 
+  dd if=/dev/urandom  of=$f bs=102 count=$(($RANDOM % 1000000000 +1000000)) 
+done
