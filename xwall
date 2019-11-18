@@ -1,0 +1,18 @@
+#!/bin/bash
+#
+# Send a message to alle active desktop user
+
+# who lists all loged in users
+# cut -f1 -d ' ' : Nur die erste Spalte mit dem Benutzernamen
+# sort -u : Doppelungen löschen
+users=$(who  | cut -f1 -d' ' | sort -u)
+
+# Für jeden aktiven Benutzer...
+for u in ${users[*]}
+do
+        # su $u -c : als den Beutzer ausführen
+        # notify-send: Nachricht auf dem Bildschirm anzeigen
+        su $u -c "notify-send 'Info an alle:' \"$1\""
+        # Zusätzlich klassische Wallnachricht, sodass wir xwall als alias für wall benutzen können.
+        wall $1
+done
